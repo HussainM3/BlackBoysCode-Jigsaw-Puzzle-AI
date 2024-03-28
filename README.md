@@ -12,4 +12,4 @@ pip install fastdtw
 pip install opencv-python
 pip install opencv-python opencv-python-headless
 ```
-4. Run the python file.
+4. Run the each cell of the jupyter notebook file.
