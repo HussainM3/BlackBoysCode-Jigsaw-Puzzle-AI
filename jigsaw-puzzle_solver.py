@@ -11,3 +11,11 @@ The solver contains many functions and can be split into 3 main sections:
 
 """
 
+# imports
+
+from scipy.ndimage import filters
+from PIL import Image, ImageChops
+import matplotlib.pyplot as plt
+from fastdtw import fastdtw
+import numpy as np
+import cv2
