@@ -230,3 +230,78 @@ for n in range(len(matches)):
   pair, ij, pointa, pointb, angle, fmatch, cmatch, fit, lock = matches[n]
   matches.extend([[(pair[1],pair[0]), ij, pointb, pointa, -angle, fmatch, cmatch, fit, lock]])
 matches.sort(key=lambda m: (m[0], m[-2]))
+
+
+"""# Assembly"""
+
+# @title Functions
+
+def updateCanvas(canvas, positions, pointA, pointB, angleA, angleB):
+  
+  # update records for tiles on canvas
+  for N, pos in enumerate(positions):
+    if N in canvas:
+      new_center = (pos[0] + 700 - pointA[0], pos[1] + 700 - pointA[1])
+      new_center = rotatePoint(new_center, angleA)
+      new_angle = pos[2] + angleA
+      positions[N] = [*new_center, new_angle]
+
+  # append record for the added tile
+  canvas.append(B)
+  center = rotatePoint((700 + 700 - pointB[0], 700 + 700 - pointB[1]), angleB)
+  positions[B] = [*center, angleB]
+
+  return canvas, positions
+
+# Assembly
+assembly = canvas_tiles[0].copy()
+positions = [[0,0,0]]*len(tiles)
+positions[0] = [700,700,0]
+canvas = [0]
+attempts = 0
+
+while (len(canvas) < 15) & (attempts < 10):
+  for n in range(len(matches)):
+        
+    # take next matching pair
+    (A, B), ij, pointA, pointB, angleB, _, _, _, lock = matches[n]
+    pointA = reScale(pointA, positions[A])
+    pointB = reScale(pointB, (700,700,0))
+
+    if A in canvas:
+      angleA = - positions[A][2]
+      pre_assembly = putOnAnvil(assembly.copy(), pointA, angleA)
+      
+      if B not in canvas:
+        newtile = putOnAnvil(canvas_tiles[B], pointB, angleB)
+
+        # fix or pass depending on loss of pixels
+        loss = (np.sum(pre_assembly[:,:,3]>0) + np.sum(newtile[:,:,3]>0) - 
+                np.sum((pre_assembly+newtile)[:,:,3]>0)
+                ) / np.sum(newtile[:,:,3]>0)
+        if loss < 0.1: 
+          matches[n][-1] = 1
+          assembly = pre_assembly.copy() + newtile.copy()
+          canvas, positions = updateCanvas(canvas, positions, 
+                                           pointA, pointB, angleA, angleB)
+  
+  attempts += 1
+
+showpic(assembly)
+
+# Mark matches in original image
+count = 0
+markup = puzzle.copy()
+colors = [[r,g,b,255] for r in [255,100,0] for g in [255,100,0] for b in [255,100,0]]
+for n in range(len(matches)):
+  (A, B), _, pointA, pointB, _, _, _, _, lock = matches[n]
+  if lock == 1:
+    count += 1
+    centerA = (tile_centers[A][1]-(150-pointA[1]), tile_centers[A][0]-(150-pointA[0]))
+    centerB = (tile_centers[B][1]-(150-pointB[1]), tile_centers[B][0]-(150-pointB[0]))
+    cv2.circle(markup, centerA, 15, colors[count], -1)
+    cv2.circle(markup, centerB, 15, colors[count], -1)
+    cv2.putText(markup, str(count), (centerA[0]-7,centerA[1]+5), 1, 1, [255,255,255,255], 2)
+    cv2.putText(markup, str(count), (centerB[0]-7,centerB[1]+5), 1, 1, [255,255,255,255], 2)
+
+showpic(markup)
