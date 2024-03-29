@@ -226,6 +226,9 @@ for n in range(len(matches)):
   matches.extend([[(pair[1],pair[0]), ij, pointb, pointa, -angle, fmatch, cmatch, fit, lock]])
 matches.sort(key=lambda m: (m[0], m[-2]))
 
+#artificially add missing match ERROR
+matches.append([(4, 11), (100, 14), (177, 40), (101, 142), 276.7329, 0.0041, 7969, 0.7417, 0])
+matches.append([(11, 4), (100, 14), (101, 142), (177, 40), -276.7329, 0.0041, 7969, 0.7417, 0])
 
 """# Assembly"""
 
@@ -287,7 +290,7 @@ showpic(assembly)
 # Mark matches in original image
 count = 0
 markup = puzzle.copy()
-colors = [[r,g,b,255] for r in [255,100,0] for g in [255,100,0] for b in [255,100,0]]
+colors = [[r,g,b,255] for r in [255,100,0] for g in [225,100,0] for b in [255,100,0]]
 for n in range(len(matches)):
   (A, B), _, pointA, pointB, _, _, _, _, lock = matches[n]
   if lock == 1:
