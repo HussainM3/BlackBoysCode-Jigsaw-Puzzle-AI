@@ -8,7 +8,7 @@ https://github.com/MaximTerleev/Jigsaw-Puzzle-AI/blob/main/jigsaw-puzzle-solver.
 
 # imports
 
-from scipy.ndimage import filters
+from scipy.ndimage import median_filter
 from PIL import Image, ImageChops
 import matplotlib.pyplot as plt
 from fastdtw import fastdtw
@@ -56,7 +56,7 @@ fill = cv2.drawContours(np.zeros(puzzle.shape[:2]), biggest, -1, 255, thickness=
 showpic(fill)
 
 # Smooth contours and trim shadows
-smooth = filters.median_filter(fill.astype('uint8'), size=10)
+smooth = median_filter(fill.astype('uint8'), size=10)
 trim_contours, _ = cv2.findContours(smooth, 0, 1)
 cv2.drawContours(smooth, trim_contours, -1, color=0, thickness=1)
 showpic(smooth)
@@ -156,7 +156,7 @@ def matchTiles(A, B):
     subcA = np.roll(cntA, -i, 0)[:LENGTH]
     pointA = tuple(np.flip(subcA[CENTER]))
     cA, (hA,wA), aA = cv2.minAreaRect(subcA)
-    typepointA = np.int0(np.flip(subcA[0] + subcA[-1] - cA))
+    typepointA = np.intp(np.flip(subcA[0] + subcA[-1] - cA))
     typeA = tileA[:,:,3][tuple(typepointA)]
     a = cv2.drawContours(np.zeros((300,300),'uint8'), subcA.reshape(-1,1,2), -1, 255, 1)
 
@@ -167,7 +167,7 @@ def matchTiles(A, B):
       subcB = np.roll(cntB, -j, 0)[:LENGTH]
       pointB = tuple(np.flip(subcB[CENTER]))
       cB, (hB,wB), aB = cv2.minAreaRect(subcB)
-      typepointB = np.int0(np.flip(subcB[0] + subcB[-1] - cB))
+      typepointB = np.intp(np.flip(subcB[0] + subcB[-1] - cB))
       typeB = tileB[:,:,3][tuple(typepointB)]
 
       # record good form matches
