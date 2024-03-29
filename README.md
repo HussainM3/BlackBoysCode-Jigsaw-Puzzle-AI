@@ -9,7 +9,7 @@ The Jigsaw Puzzle AI is a project that solves jigsaw puzzles using computer visi
 ## Usage
 1. Ensure Python is installed on your machine.
 2. Clone the repository.
-3. Run the following command to install the required packages:
+3. Run the following commands to install the required packages:
 ```bash
 pip install fastdtw
 pip install opencv-python
