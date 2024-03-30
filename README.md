@@ -14,7 +14,11 @@ Here are the steps of today's lesson:
 2. Run the following commands one by one in a **new terminal** (Top left menu > Terminal > New Terminal) to install the required packages:
 ```bash
 pip install fastdtw
+```
+```bash
 pip install opencv-python
+```
+```bash
 pip install opencv-python opencv-python-headless
 ```
 3. Follow along each cell of the jupyter notebook file to learn how the solver works!
